@@ -13,7 +13,7 @@ from multiprocessing import Pool
 from functools import partial
 
 from torch_geometric.data import Data
-from dna.de_bruijn import DeBruijnGraph
+from dna.chaos import ChaosGraph
 from torch_geometric.data import Dataset
 from torch_geometric.utils import from_networkx
 
@@ -116,7 +116,7 @@ class DNADataset(Dataset):
             # read sequence from dataset
             sequence: str = self.df.loc[idx, 'sequence']
             # generate de bruijn graph and convert it in geometric data
-            graph = DeBruijnGraph(sequence, self.k_size)
+            graph = ChaosGraph(sequence, self.k_size)
             ptg = from_networkx(
                 graph.graph_ohe,
                 group_node_attrs=graph.node_attr,
