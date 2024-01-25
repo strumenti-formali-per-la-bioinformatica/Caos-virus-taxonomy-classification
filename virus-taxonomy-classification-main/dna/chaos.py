@@ -39,41 +39,19 @@ class ChaosGraph:
         plt.imshow(superpixel_boundaries)
         plt.axis('off')
         plt.show()
-
-        # create nodes
-        attr = {}
-        for kmer in self.kmers:
-            self.graph.add_node(kmer, value=kmer)
-            # create an attribute for each possible nucleotide for each nucleotide in kmer
-            for i, k in enumerate(kmer):
-                for n in ['A', 'C', 'G', 'T']:
-                    if k == n:
-                        attr[f'{n}_{i}'] = 1
-                    else:
-                        attr[f'{n}_{i}'] = 0
-            self.graph_ohe.add_node(kmer, **attr)
-        self.node_attr = list(attr.keys())
-
-        attr = {}
-        # create edges
-        for i in range(len(self.kmers) - 1):
-            k1, k2 = self.kmers[i], self.kmers[i + 1]
-            # if edge already exist, update frequency
-            if self.graph.has_edge(k1, k2):
-                self.graph[k1][k2]['frequency'] += 1
-                self.graph_ohe[k1][k2]['frequency'] += 1
-            # else add it
-            else:
-                self.graph.add_edge(k1, k2, value=k2[-1], frequency=1)
-                # create an attribute for each possible nucleotide
-                for n in ['A', 'C', 'G', 'T']:
-                    if k2[-1] == n:
-                        attr[n] = 1
-                    else:
-                        attr[n] = 0
-                self.graph_ohe.add_edge(k1, k2, frequency=1, **attr)
-        self.edge_attr = list(attr.keys())
-        self.edge_attr.append('frequency')
+  
+        # Aggiungi i nodi al grafo
+        for label in np.unique(segments):
+            self.graph_ohe.add_node(label)
+            
+            
+        # Aggiungi gli archi tra i nodi adiacenti
+        for y in range(segments.shape[0]):
+            for x in range(segments.shape[1]):
+                label1 = segments[y, x]
+                for label2 in np.unique(segments):
+                    if label1 != label2 and sono_adiacenti(segments, label1, label2, x, y):
+                        self.graph_ohe.add_edge(label1, label2)
 
     def plot_graph(self):
         pos = nx.circular_layout(self.graph)
@@ -100,7 +78,33 @@ class ChaosGraph:
         plt.axis('off')
         plt.show()
 
+def visualize_graph(graph):
+    pos = nx.spring_layout(graph)  # Define the layout (spring layout is just an example)
+
+    # Draw nodes
+    nx.draw_networkx_nodes(graph, pos, node_size=500, node_color='skyblue')
+
+    # Draw edges
+    nx.draw_networkx_edges(graph, pos, width=2, edge_color='gray')
+
+    # Draw labels (optional)
+    nx.draw_networkx_labels(graph, pos, font_size=10, font_color='black')
+
+    # Display the graph
+    plt.show()
+
+
+def sono_adiacenti(segments, label1, label2, x, y):
+    if x > 0 and segments[y, x - 1] == label2:
+        return True
+    if x < segments.shape[1] - 1 and segments[y, x + 1] == label2:
+        return True
+    if y > 0 and segments[y - 1, x] == label2:
+        return True
+    if y < segments.shape[0] - 1 and segments[y + 1, x] == label2:
+        return True
+    return False
+
 
 if __name__ == '__main__':
     graph = ChaosGraph('ACTTCTTCACTTCTTCGGCGGC', 4)
-    graph.plot_graph()

@@ -119,8 +119,6 @@ class DNADataset(Dataset):
             graph = ChaosGraph(sequence, self.k_size)
             ptg = from_networkx(
                 graph.graph_ohe,
-                group_node_attrs=graph.node_attr,
-                group_edge_attrs=graph.edge_attr
             )
             ptg.y = torch.tensor([self.labels[self.df.loc[idx, self.taxonomy_level]]])
             # save geometric data
