@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 from complexcgr import FCGR
 import networkx as nx
+import numpy as np
+from skimage.segmentation import slic, mark_boundaries
 
 class ChaosGraph:
     def __init__(self, sequence: str, k_size: int):
@@ -12,15 +14,31 @@ class ChaosGraph:
         n_kmers: int = len(sequence) - k_size + 2
         self.kmers = [self.sequence[i:i + k_size - 1] for i in range(n_kmers)]
 
-        # Convert sequence to fcgr representation with corresponding k size
-        fcgr = FCGR(k=8, bits=16)
-        chaos_rep = fcgr(sequence)
-
         # init graph
         self.graph = nx.DiGraph()
         self.graph_ohe = nx.DiGraph()
         self.node_attr = []
         self.edge_attr = []
+
+        # Convert sequence to fcgr representation with corresponding k size
+        fcgr = FCGR(k=8, bits=16)
+        chaos_rep = fcgr(sequence)
+        chaos_image = fcgr.array2img(chaos_rep)
+        # This gives us a PIL image
+        chaos_image.show()
+        # Convert Pillow image to NumPy array
+        image = np.array(chaos_image)
+        # Define the number of desired superpixels
+        num_superpixels = 200
+
+        # Perform superpixel segmentation
+        segments = slic(image, n_segments=num_superpixels, compactness=5, channel_axis = None)
+
+        # Visualize the original image with superpixel boundaries
+        superpixel_boundaries = mark_boundaries(image, segments)
+        plt.imshow(superpixel_boundaries)
+        plt.axis('off')
+        plt.show()
 
         # create nodes
         attr = {}
@@ -84,5 +102,5 @@ class ChaosGraph:
 
 
 if __name__ == '__main__':
-    graph = DeBruijnGraph('ACTTCTTCGGC', 4)
+    graph = ChaosGraph('ACTTCTTCACTTCTTCGGCGGC', 4)
     graph.plot_graph()
