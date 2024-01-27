@@ -3,7 +3,7 @@ import networkx as nx
 import numpy as np
 from skimage.segmentation import slic, mark_boundaries
 from complexcgr import FCGR
-from visualize import *
+from dna.visualize import *
 
 class ChaosGraph:
     def __init__(self, sequence: str, k_size: int):

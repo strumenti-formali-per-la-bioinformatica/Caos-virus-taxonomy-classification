@@ -34,16 +34,27 @@ class OverlapGraph:
 
         self.node_attr = list(attr.keys())
 
+        attr = {}
+
         # create edges
         for k1 in self.kmers:
             for kmer in self.kmers:
                 if k1 != kmer:
                     overlap_size = get_overlap_size(kmer, k1)
                     if overlap_size >= 4:
-                        self.graph.add_edge(k1, kmer, value=overlap_size)
-                        self.graph_ohe.add_edge(k1, kmer, value=overlap_size)
-            
+                        # If the arc isn't present add it, if it is keep track of how many times we would've added it
+                        # if edge already exist, update frequency
+                        if self.graph.has_edge(k1, kmer):
+                            self.graph[k1][kmer]['frequency'] += 1
+                            self.graph_ohe[k1][kmer]['frequency'] += 1
+                        # else add it
+                        else:
+                            self.graph.add_edge(k1, kmer, value=overlap_size, frequency = 1)
+                            self.graph_ohe.add_edge(k1, kmer, value=overlap_size, frequency = 1)
 
+        # Use the frequency of a type of arc as a feature
+        self.edge_attr.append('frequency')
+            
     def plot_graph(self):
         pos = nx.circular_layout(self.graph)
         plt.figure()
