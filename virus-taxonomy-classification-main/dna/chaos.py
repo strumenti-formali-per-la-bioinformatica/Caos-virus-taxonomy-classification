@@ -21,6 +21,22 @@ class ChaosGraph:
         # Generazione dell'immagine FCGR
         fcgr = FCGR(k=4, bits=8)
         chaos_rep = fcgr(self.sequence)
+        chaos_array = np.asarray(chaos_rep)
+        # C_quadrant = chaos_array[:8,:8]
+        # G_quadrant = chaos_array[8:16,:8]
+        # A_quadrant = chaos_array[:8,8:16]
+        # T_quadrant = chaos_array[8:16,8:16]
+
+        # print(chaos_array)
+        # print("C QUADRANT")
+        # print(C_quadrant)
+        # print("A QUADRANT")
+        # print(A_quadrant)
+        # print("G QUADRANT")
+        # print(G_quadrant)
+        # print("T QUADRANT")
+        # print(T_quadrant)
+
         chaos_image = fcgr.array2img(chaos_rep)
         image = np.array(chaos_image)
         
@@ -29,26 +45,44 @@ class ChaosGraph:
         segments = slic(image, n_segments=num_superpixels, compactness=5, channel_axis=None)
         
         # Crea nodi
+        x = chaos_array.shape[0]
+        y = chaos_array.shape[1]
+
         attr = {}
-        for y in range(segments.shape[0]):
-            for x in range(segments.shape[1]):
-                label = segments[y, x]
-                if label not in self.graph_chaos:
-                    node_feature = np.sum(segments == label)
-                    attr[f'pixel_count'] = node_feature
-                    self.graph_chaos.add_node(label, **attr)
+
+        # for ogni x e y se [x,y] non è uguale a 0 allora lo consideriamo un nodo con valore [x,y]
+        for i in range(x):
+            for j in range(y):
+                value = chaos_array[i,j]
+                if value != 0:
+                # come attributo la lettera che rappresenta in one hot encoding
+                    for n in ['A', 'C', 'G', 'T']:
+                        if n == get_this_sequence_letter():
+                            attr[f'{n}'] = 1
+                        else:
+                            attr[f'{n}'] = 0
+                # e la posizione in termini spaziali
+                    attr["position"] = (i,j)
+                    self.graph_chaos.add_node(value, **attr)
+
         self.node_attr = list(attr.keys())
 
-        # Crea archi 
-        attr = {}
-        pass
-        self.edge_attr = list(attr.keys())
+        # Crea archi
+        # archi tra tutti i nodi
+        for i, x in enumerate(self.graph_chaos.nodes):
+            for j , k in enumerate(list(self.graph_chaos.nodes)[i+1:]):
+                self.graph_chaos.add_edge(x, k)
+                pass
+        # feature per archi la distanza euclidea  tra i nodi che li compongono
 
         #self.add_nodes_and_edges(segments)
         self.chaos_image = image
         self.segments = segments
 
     
+def get_this_sequence_letter():
+    return 'A'
+
 if __name__ == '__main__':
     sequence1 = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     graph1 = ChaosGraph(sequence1, 8)
