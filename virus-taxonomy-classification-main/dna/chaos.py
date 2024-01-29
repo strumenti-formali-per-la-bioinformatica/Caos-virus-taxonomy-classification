@@ -37,13 +37,6 @@ class ChaosGraph:
         # print("T QUADRANT")
         # print(T_quadrant)
 
-        chaos_image = fcgr.array2img(chaos_rep)
-        image = np.array(chaos_image)
-        
-        # Segmentazione in superpixel
-        num_superpixels = 10
-        segments = slic(image, n_segments=num_superpixels, compactness=5, channel_axis=None)
-        
         # Crea nodi
         x = chaos_array.shape[0]
         y = chaos_array.shape[1]
@@ -57,7 +50,7 @@ class ChaosGraph:
                 if value != 0:
                 # come attributo la lettera che rappresenta in one hot encoding
                     for n in ['A', 'C', 'G', 'T']:
-                        if n == get_this_sequence_letter():
+                        if n == get_this_sequence_letter(j , i):
                             attr[f'{n}'] = 1
                         else:
                             attr[f'{n}'] = 0
@@ -69,24 +62,33 @@ class ChaosGraph:
 
         # Crea archi
         # archi tra tutti i nodi
-        for i, x in enumerate(self.graph_chaos.nodes):
-            for j , k in enumerate(list(self.graph_chaos.nodes)[i+1:]):
-                self.graph_chaos.add_edge(x, k)
-                pass
+        for i, x in enumerate(self.graph_chaos.nodes(data=True)):
+            for j , k  in enumerate(list(self.graph_chaos.nodes(data=True))[i+1:]):
+                node1, node2 = x[0], k[0]
+                first_node_position = x[1]['position']
+                second_node_position = k[1]['position']
+                self.graph_chaos.add_edge(node1, node2)
         # feature per archi la distanza euclidea  tra i nodi che li compongono
+                pass
 
-        #self.add_nodes_and_edges(segments)
-        self.chaos_image = image
-        self.segments = segments
 
     
-def get_this_sequence_letter():
-    return 'A'
+def get_this_sequence_letter(x_axis_position, y_axis_position):
+    if y_axis_position < 8 :
+        if x_axis_position < 8:
+            return 'C'
+        else :
+            return 'A'
+    else:
+        if x_axis_position < 8:
+            return 'G'
+        else :
+            return 'T'
+
 
 if __name__ == '__main__':
     sequence1 = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     graph1 = ChaosGraph(sequence1, 8)
-    print("---Grafo 1 ---")
     for node, attrs in graph1.graph_chaos.nodes(data=True):
         print(f"Nodo {node}: {attrs}")
 
