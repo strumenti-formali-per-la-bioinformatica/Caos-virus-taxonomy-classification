@@ -4,7 +4,6 @@ import numpy as np
 from math import sqrt
 from skimage.segmentation import slic
 from complexcgr import FCGR
-from visualize import *
 
 class ChaosGraph:
     def __init__(self, sequence: str, k_size: int):
@@ -51,16 +50,15 @@ class ChaosGraph:
             for j in range(y):
                 value = chaos_array[i,j]
                 if value != 0:
-                # come attributo la lettera che rappresenta in one hot encoding
-                #    for n in ['A', 'C', 'G', 'T']:
-                #       if n == get_this_sequence_letter(j , i):
-                #           attr[f'{n}'] = 1
-                #       else:
-                #           attr[f'{n}'] = 0
-                # e la posizione in termini spaziali
                     attr["position"] = (i,j)
                     attr["value"] = value
-                    attr["kmer"] = pixel2kmer_dict[(i+1,j+1)]
+                    kmer = pixel2kmer_dict[(i+1,j+1)]
+                    for i, k in enumerate(kmer):
+                        for n in ['A', 'C', 'G', 'T']:
+                            if k == n:
+                                attr[f'{n}_{i}'] = 1
+                            else:
+                                attr[f'{n}_{i}'] = 0
                     #trovare un nome migliore univoco
                     self.graph_chaos.add_node((i,j), **attr)
         self.node_attr = list(attr.keys())
@@ -100,36 +98,21 @@ class ChaosGraph:
         plt.axis('off')
         plt.show()
 
-def get_this_sequence_letter(x_axis_position, y_axis_position):
-    if y_axis_position < 8 :
-        if x_axis_position < 8:
-            return 'C'
-        else :
-            return 'A'
-    else:
-        if x_axis_position < 8:
-            return 'G'
-        else :
-            return 'T'
-
 if __name__ == '__main__':
     sequence1 = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     graph1 = ChaosGraph(sequence1, 4)
     print("---Grafo 1 ---")
     for node, attrs in graph1.graph_chaos.nodes(data=True):
         print(f"Nodo {node}: {attrs}")
-    graph1.plot_graph()
 
     sequence2 = 'CCCCCCCCCCCCCCCCCCCCCCCCCTTTTAAAAAAAAAAAAAAAAAAAAAAAAA'
     graph2 = ChaosGraph(sequence2,4)
     print("---Grafo 2 ---")
     for node, attrs in graph2.graph_chaos.nodes(data=True):
         print(f"Nodo {node}: {attrs}")
-    graph2.plot_graph()
 
     sequence3 = 'ACTACTTCACTTCTTCACTTCTTCGGCGGCTTACTTCTCACTTCTCACTTCTTCGGCGGCCACTTCTTCGGCGGC'
     graph3 = ChaosGraph(sequence3, 4)
     print("---Grafo 3 ---")
     for node, attrs in graph3.graph_chaos.nodes(data=True):
-        print(f"Nodo {node}: {attrs}")
-    graph3.plot_graph()    
+        print(f"Nodo {node}: {attrs}") 
