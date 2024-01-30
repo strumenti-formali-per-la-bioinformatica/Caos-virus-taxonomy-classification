@@ -93,7 +93,7 @@ class DNADataset(Dataset):
     def process(self):
         # split sequence on different process
         n_reads: int = self.n_graphs
-        n_proc: int = os.cpu_count()
+        n_proc: int = os.cpu_count() - 2
         n_reads_for_process: int = n_reads // n_proc
         rest: int = n_reads % n_proc
         # create start and end index for all process
@@ -123,6 +123,7 @@ class DNADataset(Dataset):
             ptg = from_networkx(
                 graph.graph_chaos,
                 group_node_attrs=graph.node_attr,
+                group_edge_attrs=graph.edge_attr,
             )
             ptg.y = torch.tensor([self.labels[self.df.loc[idx, self.taxonomy_level]]])
             # save geometric data

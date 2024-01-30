@@ -20,10 +20,10 @@ class ChaosGraph:
         self.edge_attr = []
         
         # Generazione dell'immagine FCGR
-        fcgr = FCGR(k=4, bits=8)
+        fcgr = FCGR(k=k_size, bits=8)
         chaos_rep = fcgr(self.sequence)
         chaos_array = np.asarray(chaos_rep)
-        print(chaos_rep)
+
         # Crea nodi
         x = chaos_array.shape[0]
         y = chaos_array.shape[1]
