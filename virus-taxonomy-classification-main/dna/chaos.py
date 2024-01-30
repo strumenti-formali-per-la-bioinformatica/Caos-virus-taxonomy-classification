@@ -15,29 +15,15 @@ class ChaosGraph:
 
         #init grafo
         self.graph_chaos = nx.Graph()
+        self.graph = nx.Graph()
         self.node_attr = []
         self.edge_attr = []
         
         # Generazione dell'immagine FCGR
         fcgr = FCGR(k=4, bits=8)
         chaos_rep = fcgr(self.sequence)
-        
         chaos_array = np.asarray(chaos_rep)
-        # C_quadrant = chaos_array[:8,:8]
-        # G_quadrant = chaos_array[8:16,:8]
-        # A_quadrant = chaos_array[:8,8:16]
-        # T_quadrant = chaos_array[8:16,8:16]
-
-        # print(chaos_array)
-        # print("C QUADRANT")
-        # print(C_quadrant)
-        # print("A QUADRANT")
-        # print(A_quadrant)
-        # print("G QUADRANT")
-        # print(G_quadrant)
-        # print("T QUADRANT")
-        # print(T_quadrant)
-
+      
         # Crea nodi
         x = chaos_array.shape[0]
         y = chaos_array.shape[1]
@@ -53,6 +39,7 @@ class ChaosGraph:
                     attr["position"] = (i,j)
                     attr["value"] = value
                     kmer = pixel2kmer_dict[(i+1,j+1)]
+                    self.graph.add_node(kmer, value=kmer)
                     for i, k in enumerate(kmer):
                         for n in ['A', 'C', 'G', 'T']:
                             if k == n:
@@ -60,7 +47,7 @@ class ChaosGraph:
                             else:
                                 attr[f'{n}_{i}'] = 0
                     #trovare un nome migliore univoco
-                    self.graph_chaos.add_node((i,j), **attr)
+                    self.graph_chaos.add_node(kmer, **attr)
         self.node_attr = list(attr.keys())
         
         # Crea archi
@@ -73,26 +60,28 @@ class ChaosGraph:
                 second_node_position = k[1]['position']
                 distance = sqrt((second_node_position[0] - first_node_position[0]) ** 2 + (second_node_position[1] - first_node_position[1]) ** 2)
                 attr['distance']= distance
+                kmer1 = pixel2kmer_dict[(first_node_position[0] +1,first_node_position[1]+1)]
+                kmer2 = pixel2kmer_dict[(second_node_position[0] +1,second_node_position[1]+1)]
+                self.graph.add_edge(kmer1,kmer2,**attr)
                 self.graph_chaos.add_edge(node1, node2, **attr)
         self.edge_attr = list(attr.keys())
 
     def plot_graph(self):
         # Definisci la posizione dei nodi nel grafo
-        #pos = nx.get_node_attributes(self.graph_chaos, 'position') 
-        pos = nx.circular_layout(self.graph_chaos)
+        pos = nx.circular_layout(self.graph)
         # Crea una figura per il plot
         plt.figure(figsize=(8, 8))
 
         # Disegna il grafo
-        nx.draw(self.graph_chaos, pos, edge_color='black', width=1, linewidths=1,
+        nx.draw(self.graph, pos, edge_color='black', width=1, linewidths=1,
                 node_size=500, node_color='pink', alpha=0.9,
-                labels={node: data['kmer'] for node, data in self.graph_chaos.nodes(data=True)})
+                labels={node: node for node in self.graph.nodes()})  # Usa la chiave del nodo come etichetta
 
         # Ottieni gli attributi 'distance' per ogni arco nel grafo
-        edge_labels = nx.get_edge_attributes(self.graph_chaos, 'distance')
+        edge_labels = nx.get_edge_attributes(self.graph, 'distance')
 
         # Disegna le etichette degli archi con la distanza
-        nx.draw_networkx_edge_labels(self.graph_chaos, pos, edge_labels=edge_labels, font_color='red')
+        nx.draw_networkx_edge_labels(self.graph, pos, edge_labels=edge_labels, font_color='red')
 
         # Nasconde gli assi per una visualizzazione più pulita
         plt.axis('off')
@@ -104,15 +93,18 @@ if __name__ == '__main__':
     print("---Grafo 1 ---")
     for node, attrs in graph1.graph_chaos.nodes(data=True):
         print(f"Nodo {node}: {attrs}")
+    graph1.plot_graph()
 
     sequence2 = 'CCCCCCCCCCCCCCCCCCCCCCCCCTTTTAAAAAAAAAAAAAAAAAAAAAAAAA'
     graph2 = ChaosGraph(sequence2,4)
     print("---Grafo 2 ---")
     for node, attrs in graph2.graph_chaos.nodes(data=True):
         print(f"Nodo {node}: {attrs}")
+    graph2.plot_graph()    
 
     sequence3 = 'ACTACTTCACTTCTTCACTTCTTCGGCGGCTTACTTCTCACTTCTCACTTCTTCGGCGGCCACTTCTTCGGCGGC'
     graph3 = ChaosGraph(sequence3, 4)
     print("---Grafo 3 ---")
     for node, attrs in graph3.graph_chaos.nodes(data=True):
         print(f"Nodo {node}: {attrs}") 
+    graph3.plot_graph()    
