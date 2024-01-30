@@ -23,7 +23,7 @@ class ChaosGraph:
         fcgr = FCGR(k=4, bits=8)
         chaos_rep = fcgr(self.sequence)
         chaos_array = np.asarray(chaos_rep)
-      
+        print(chaos_rep)
         # Crea nodi
         x = chaos_array.shape[0]
         y = chaos_array.shape[1]
@@ -36,8 +36,7 @@ class ChaosGraph:
             for j in range(y):
                 value = chaos_array[i,j]
                 if value != 0:
-                    attr["position"] = (i,j)
-                    attr["value"] = value
+                    attr["frequency"] = value
                     kmer = pixel2kmer_dict[(i+1,j+1)]
                     self.graph.add_node(kmer, value=kmer)
                     for i, k in enumerate(kmer):
@@ -46,29 +45,28 @@ class ChaosGraph:
                                 attr[f'{n}_{i}'] = 1
                             else:
                                 attr[f'{n}_{i}'] = 0
-                    #trovare un nome migliore univoco
                     self.graph_chaos.add_node(kmer, **attr)
         self.node_attr = list(attr.keys())
         
+        attr = {}  
         # Crea archi
-        # archi tra tutti i nodi
-        attr={}
         for i, x in enumerate(self.graph_chaos.nodes(data=True)):
-            for j , k  in enumerate(list(self.graph_chaos.nodes(data=True))[i+1:]):
-                node1, node2 = x[0], k[0]
-                first_node_position = x[1]['position']
-                second_node_position = k[1]['position']
-                distance = sqrt((second_node_position[0] - first_node_position[0]) ** 2 + (second_node_position[1] - first_node_position[1]) ** 2)
-                attr['distance']= distance
-                kmer1 = pixel2kmer_dict[(first_node_position[0] +1,first_node_position[1]+1)]
-                kmer2 = pixel2kmer_dict[(second_node_position[0] +1,second_node_position[1]+1)]
-                self.graph.add_edge(kmer1,kmer2,**attr)
-                self.graph_chaos.add_edge(node1, node2, **attr)
+            for j, k in enumerate(list(self.graph_chaos.nodes(data=True))[i+1:]):
+                kmer1, kmer2 = x[0], k[0]
+
+                if kmer1 != kmer2:  # Evita di confrontare un k-mer con se stesso
+                    distance = sum(ch1 != ch2 for ch1, ch2 in zip(kmer1, kmer2))
+                    # Se la distanza soddisfa il criterio, ad esempio distanza di Hamming ≤ 1
+                    if distance <= 2:
+                        attr['distance'] = distance  
+                        self.graph.add_edge(kmer1, kmer2, **attr)
+                        self.graph_chaos.add_edge(kmer1, kmer2, **attr)
         self.edge_attr = list(attr.keys())
 
     def plot_graph(self):
         # Definisci la posizione dei nodi nel grafo
         pos = nx.circular_layout(self.graph)
+
         # Crea una figura per il plot
         plt.figure(figsize=(8, 8))
 
