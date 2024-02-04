@@ -21,7 +21,7 @@ from dna.dataset import DNADataset
 from torch_geometric.loader import DataLoader
 
 from sklearn.utils import class_weight
-from torch.optim import Adadelta
+from torch.optim import AdamW
 
 import models
 from models.diff_pool import DiffPool
@@ -150,7 +150,7 @@ def main(
         logger.info(model.print_hyperparameter())
 
         # init optimizer
-        optimizer = Adadelta(model.parameters())
+        optimizer = AdamW(model.parameters())
         # put model on gpu if it is available
         model.to(device)
 
