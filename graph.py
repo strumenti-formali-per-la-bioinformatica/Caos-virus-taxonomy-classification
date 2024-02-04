@@ -44,8 +44,8 @@ def timetakenplot():
 def metrics_plot2():
     kmers_length = [4,5,6,7,8,9]
     precision = [51,54,60,67,69,73]
-    recall = [65,75,77,78,80,78,80]
-    f1_Score = [65,76,77,78,80,77,80]
+    recall = [52,54,60,66,80,68,73]
+    f1_Score = [51,54,60,66,80,68,73]
 
     fig, ax = plt.subplots()
     ax.set(xlabel='Kmer length', ylabel='Value (%)', title="Precision")
