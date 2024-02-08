@@ -44,13 +44,23 @@ def timetakenplot():
 def metrics_plot2():
     kmers_length = [4,5,6,7,8,9]
     precision = [51,54,60,67,69,73]
-    recall = [52,54,60,66,80,68,73]
-    f1_Score = [51,54,60,66,80,68,73]
+    recall = [52,54,60,66,68,73]
+    f1_Score = [51,54,60,66,68,73]
 
     fig, ax = plt.subplots()
     ax.set(xlabel='Kmer length', ylabel='Value (%)', title="Precision")
     ax.grid()
     ax.plot(kmers_length, precision)
+    plt.show()
+    fig, ax = plt.subplots()
+    ax.set(xlabel='Kmer length', ylabel='Value (%)', title="Recall")
+    ax.grid()
+    ax.plot(kmers_length, recall)
+    plt.show()
+    fig, ax = plt.subplots()
+    ax.set(xlabel='Kmer length', ylabel='Value (%)', title="F1 Score")
+    ax.grid()
+    ax.plot(kmers_length, f1_Score)
     plt.show()
     
 def timetakenplot2():
@@ -62,13 +72,13 @@ def timetakenplot2():
     plt.bar(kmers_length, time)
     
     plt.xlabel("Kmer length")
-    plt.ylabel("Time taken (seconds)")
-    plt.title("Time needed to preprocess the dataset given a specific kmer length")
+    plt.ylabel("Time needed for preprocessing (seconds)")
+    plt.title("Time needed to preprocess the dataset on a Ryzen 9 7950X")
     plt.show()
     
 if __name__ == '__main__':
     metrics_plot2()
-    timetakenplot()
+    timetakenplot2()
     
     
 
