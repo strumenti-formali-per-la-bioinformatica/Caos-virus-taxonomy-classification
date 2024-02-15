@@ -160,5 +160,5 @@ cython_debug/
 #.idea/
 
 # dataset
-virus-taxonomy-classification-main/data/*
-virus-taxonomy-classification-main/log/*
+log/*
+data/*
