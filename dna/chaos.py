@@ -12,7 +12,7 @@ class ChaosGraph:
         self.k_size = k_size
 
         #init grafo
-        self.graph_chaos = nx.Graph()
+        self.graph_ohe = nx.Graph()
         self.graph = nx.Graph()
         self.node_attr = []
         self.edge_attr = []
@@ -43,13 +43,13 @@ class ChaosGraph:
                                 attr[f'{n}_{i}'] = 1
                             else:
                                 attr[f'{n}_{i}'] = 0
-                    self.graph_chaos.add_node(kmer, **attr)
+                    self.graph_ohe.add_node(kmer, **attr)
         self.node_attr = list(attr.keys())
         
         attr = {}  
         # Crea archi
-        for i, x in enumerate(self.graph_chaos.nodes(data=True)):
-            for j, k in enumerate(list(self.graph_chaos.nodes(data=True))[i+1:]):
+        for i, x in enumerate(self.graph_ohe.nodes(data=True)):
+            for j, k in enumerate(list(self.graph_ohe.nodes(data=True))[i+1:]):
                 kmer1, kmer2 = x[0], k[0]
 
                 if kmer1 != kmer2:  # Evita di confrontare un k-mer con se stesso
@@ -58,7 +58,7 @@ class ChaosGraph:
                     if distance <= 2:
                         attr['distance'] = distance  
                         self.graph.add_edge(kmer1, kmer2, **attr)
-                        self.graph_chaos.add_edge(kmer1, kmer2, **attr)
+                        self.graph_ohe.add_edge(kmer1, kmer2, **attr)
         self.edge_attr = list(attr.keys())
 
     def plot_graph(self):
@@ -87,20 +87,20 @@ if __name__ == '__main__':
     sequence1 = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     graph1 = ChaosGraph(sequence1, 4)
     print("---Grafo 1 ---")
-    for node, attrs in graph1.graph_chaos.nodes(data=True):
+    for node, attrs in graph1.graph_ohe.nodes(data=True):
         print(f"Nodo {node}: {attrs}")
     graph1.plot_graph()
 
     sequence2 = 'CCCCCCCCCCCCCCCCCCCCCCCCCTTTTAAAAAAAAAAAAAAAAAAAAAAAAA'
     graph2 = ChaosGraph(sequence2,4)
     print("---Grafo 2 ---")
-    for node, attrs in graph2.graph_chaos.nodes(data=True):
+    for node, attrs in graph2.graph_ohe.nodes(data=True):
         print(f"Nodo {node}: {attrs}")
     graph2.plot_graph()    
 
     sequence3 = 'ACTACTTCACTTCTTCACTTCTTCGGCGGCTTACTTCTCACTTCTCACTTCTTCGGCGGCCACTTCTTCGGCGGC'
     graph3 = ChaosGraph(sequence3, 4)
     print("---Grafo 3 ---")
-    for node, attrs in graph3.graph_chaos.nodes(data=True):
+    for node, attrs in graph3.graph_ohe.nodes(data=True):
         print(f"Nodo {node}: {attrs}") 
     graph3.plot_graph()    

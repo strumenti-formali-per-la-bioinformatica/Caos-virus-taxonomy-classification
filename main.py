@@ -25,8 +25,6 @@ from torch.optim import AdamW
 
 import models
 from models.diff_pool import DiffPool
-from models.ug_former import UGFormerGAT
-from models.ug_former import UGFormerGCN
 from models import train
 from models import predict
 

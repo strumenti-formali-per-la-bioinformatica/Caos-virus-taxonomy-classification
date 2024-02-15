@@ -118,10 +118,10 @@ class DNADataset(Dataset):
             # read sequence from dataset
             sequence: str = self.df.loc[idx, 'sequence']
             # generate de bruijn graph and convert it in geometric data
-            graph = ChaosGraph(sequence, self.k_size)
+            graph = OverlapGraph(sequence, self.k_size)
             
             ptg = from_networkx(
-                graph.graph_chaos,
+                graph.graph_ohe,
                 group_node_attrs=graph.node_attr,
                 group_edge_attrs=graph.edge_attr,
             )
