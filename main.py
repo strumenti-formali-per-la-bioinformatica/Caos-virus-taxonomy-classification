@@ -132,16 +132,6 @@ def main(
                 hyperparameter=hyperparameter,
                 weights=class_weights
             )
-        if model_selected == 'ug_gat':
-            model: models.Model = UGFormerGAT(
-                hyperparameter=hyperparameter,
-                weights=class_weights
-            )
-        if model_selected == 'ug_gcn':
-            model: models.Model = UGFormerGCN(
-                hyperparameter=hyperparameter,
-                weights=class_weights
-            )
 
         # log model hyper parameters
         logger.info('Model hyperparameter')
@@ -257,18 +247,12 @@ if __name__ == '__main__':
                         type=int, default=128, help='define mlp embedding size')
     parser.add_argument('-layers', dest='n_layers', action='store',
                         type=int, default=1, help='define number of model layers')
-    parser.add_argument('-att_layers', dest='n_att_layers', action='store',
-                        type=int, default=1, help='define number of attention layers')
-    parser.add_argument('-tf_heads', dest='tf_heads', action='store',
-                        type=int, default=1, help='define number of transformer heads')
-    parser.add_argument('-gat_heads', dest='gat_heads', action='store',
-                        type=int, default=1, help='define number of gat heads')
 
     args = parser.parse_args()
 
     # check model selected
-    if args.model not in ['diff_pool', 'ug_gat', 'ug_gcn']:
-        raise Exception('select one of these models: ["diff_pool", "ug_gat", "ug_gcn"]')
+    if args.model not in ['diff_pool']:
+        raise Exception('only the diff_pool model is currently supported')
 
     # create dict of model hyperparameter
     parameter: Dict[str, Any] = {}
@@ -277,19 +261,6 @@ if __name__ == '__main__':
         parameter['dim_embedding'] = args.embedding
         parameter['dim_embedding_mlp'] = args.embedding_mlp
         parameter['n_layers'] = args.n_layers
-    if args.model == 'ug_gat':
-        parameter['hidden_size'] = args.hidden_size
-        parameter['dim_embedding'] = args.embedding
-        parameter['n_layers'] = args.n_layers
-        parameter['att_layers'] = args.n_att_layers
-        parameter['tf_heads'] = args.tf_heads
-        parameter['gat_heads'] = args.gat_heads
-    if args.model == 'ug_gcn':
-        parameter['hidden_size'] = args.hidden_size
-        parameter['dim_embedding'] = args.embedding
-        parameter['n_layers'] = args.n_layers
-        parameter['att_layers'] = args.n_att_layers
-        parameter['tf_heads'] = args.tf_heads
 
     main(
         len_read=args.len_read,

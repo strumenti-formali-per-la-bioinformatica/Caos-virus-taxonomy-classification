@@ -133,9 +133,9 @@ The best results were  obtained with a kmer length for the former and of 9 for t
 | metric    | score |
 |-----------+-------|
 | accuracy  | 0.736 |
-| precision | 0.740 |
-| recall    | 0.736 |
-| f1-score  | 0.732 |
+| precision | 0.730 |
+| recall    | 0.730 |
+| f1-score  | 0.726 |
 +-----------+-------+
 ```
 
@@ -163,10 +163,10 @@ Mononegavirales      0.689     0.633     0.660      1258
 +-----------+-------+
 | metric    | score |
 |-----------+-------|
-| accuracy  | 0.736 |
-| precision | 0.740 |
-| recall    | 0.736 |
-| f1-score  | 0.732 |
+| accuracy  | 0.804 |
+| precision | 0.804 |
+| recall    | 0.799 |
+| f1-score  | 0.801 |
 +-----------+-------+
 ```
 
