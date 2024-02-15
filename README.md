@@ -1,11 +1,11 @@
 # Table of Contents
 
-* [Overview](#Overview)
+* [Overview](#overview)
 * [Requirements](#requirements)
   * [Dataset](#dataset)
 * [Usage](#usage)
 * [Results](#results)
-  * [How to reproduce the experiment](#how-to-reproduce-the-experiment)
+  * [How to run the code](#how-to-run-the-code)
 * [Citations of works used](#citations-of-works-used)
 
 # Overview
@@ -189,32 +189,15 @@ Mononegavirales      0.742     0.764     0.753      1258
 ```
 
 
-## How to reproduce the experiment
+## How to run the code
 
-First, it is necessary to download exactly the same dataset we used. Below are the commands for downloading our 
-*training*, *validation* and *testing* dataset.
-
-```shell
-wget "https://drive.google.com/uc?export=download&id=1P_U6VBaEckH8Ycbg3CDZp2LABSreffBP" -O dataset.tar.gz
-tar -xzvf dataset.tar.gz
-```
-
-Next, n order to reproduce the realized experiment, it is necessary to download the pre-trained model and run the ```main.py``` 
-script again with the correct hyperparameters.
-
-The following are the commands for properly downloading the pre-trained model.
-
-```shell
-wget "https://drive.google.com/uc?export=download&id=1PXJWIC8u7Pqy-V-lEC-itEjwDn3O7dFV" -O model.tar.gz
-tar -xzvf model.tar.gz
-```
-
-With that done, we have nothing left but to run the ```main.py``` script as follows.
+Here's an example of a command, running this without correctly installed environmentor having followed all the preprocessing steps is not advised and may lead to crashes and other unintended behaviour.
+Assuming a correctly installed environment and that the user followed all the preprocessing steps, we have nothing left but to run the ```main.py``` script as follows.
 
 ```shell
 python3 main.py -read 250 \
                 -overlap 200 \
-                -k 14 \
+                -k 12 \
                 -model diff_pool \
                 -hidden 256 \
                 -embedding 64 \
