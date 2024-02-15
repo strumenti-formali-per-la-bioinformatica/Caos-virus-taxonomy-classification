@@ -162,4 +162,3 @@ cython_debug/
 # dataset
 virus-taxonomy-classification-main/data/*
 virus-taxonomy-classification-main/log/*
-virus-taxonomy-classification-main/img/*
