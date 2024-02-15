@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-from math import sqrt
-from skimage.segmentation import slic
 from complexcgr import FCGR
 
 class ChaosGraph:
