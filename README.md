@@ -1,6 +1,6 @@
 # Table of Contents
 
-* [Introduction](#introduction)
+* [Overview](#Overview)
 * [Requirements](#requirements)
   * [Dataset](#dataset)
 * [Usage](#usage)
@@ -8,34 +8,14 @@
   * [How to reproduce the experiment](#how-to-reproduce-the-experiment)
 * [Citations of works used](#citations-of-works-used)
 
-# Introduction
-
-The study of taxonomic classification of viruses is essential for the accurate identification of viruses, 
-diagnosis of diseases, monitoring of viral evolution, and conservation of biodiversity. 
-This knowledge is critical for protecting human, animal, and environmental health and for developing 
-effective strategies for prevention, control, and treatment of viral diseases.
-
-In the study of taxonomic classification of viruses, a key tool is alignment systems. These tools allow the genetic 
-sequences of viruses to be compared in order to identify similarities and differences between them.
-
-However, the alignment of viral sequences presents some problems. Viruses can differ significantly in 
-their genomic structure, size and complexity. Some viruses may have sequences that are highly mutated, 
-fragmented, or have variable regions. These characteristics make it difficult to achieve accurate 
-sequence alignment. 
-
-With the advent of modern sequencing technologies, genomic databases are expanding rapidly, 
-with thousands of sequences being deposited regularly. Therefore, efficient and automated methods are 
-required to manage and analyze these huge amounts of data.
-
-To address these challenges, more and more researchers are adopting machine learning approaches.
-
-Our project proposes an approach to the problem of taxonomic classification of viruses using machine learning. 
-More specifically, our approach is based on graph classification using Graph Neural Networks.
-
-The idea is to represent the reads to be classified in the form of graphs, using De Bruijn graphs 
-and then use a GNN for their classification.
+# Overview
+A taxonomy (or taxonomical classification) is a scheme of classification, it is a way to divide, often in an hierarchical way different entities.\
+In the world of biology being able to correctly identify the taxonomy of something can give us precious informations about it.\
+This project, inspired and made possible by the previous work of our colleagues A.Cirillo and N.Gagliarde, explores the possibility
+of using overlap and chaos graphs to train a GNN that is able to correctly identify the taxonomy of a virus.
 
 # Requirements
+This is section is shared with and adapted from original project of A.Cirillo and N.Gagliarde.
 
 The requirements for using the project are as follows:
 * Unix-like operating system.
@@ -88,6 +68,7 @@ conda install -c conda-forge tabulate
 conda install -c conda-forge tqdm
 conda install -c anaconda scikit-learn
 conda install -c pytorch pytorch
+pip install complexcgr
 ```
 
 ## Dataset
@@ -125,17 +106,11 @@ The following is a description of the different inputs.
 * ```len_overlap```: define length of overlapping between reads.
 * ```k_size```: define length of kmers.
 * ```batch_size```: define the batch size.
-* ```model```: select the model to use. The possible values are:
-  * *diff_pool*: select as a DiffPool model.
-  * *ug_gat*: selects as a UGformer model that uses a GAT layer as the convolutional layer.
-  * *ug_gcn*: selects as a UGformer model that uses a GCN layer as the convolutional layer.
+* ```model```: select the model to use. In the current version only a diff_pool model is supported.
 * ```hidden_size```: defines the number of neurons to be used in the hidden layers.
 * ```n_layers```: defines the number of layers.
 * ```embedding```: defines the size of the embeddings. 
 * ```embedding_mlp```: defines the size of the embeddings in the fully connected layers. 
-* ```n_att_layers```: defines the number of attention layers.
-* ```tf_heads```: defines the number of heads used by the transformers.
-* ```gat_heads```: defines the number of heads used by the gat layers.
 
 # Results
 
@@ -143,28 +118,15 @@ This section shows the results obtained.
 
 The experiments were carried out by setting the read size to 250bp with overlap of 200bp.
 
-Two different models, more specifically **UGformer** and **DiffPool**, were tested during the various 
-experiments. References to these two models can be found in the "*[Citations of works used](#citations-of-works-used)*" 
+Three different models, more specifically **UGformer** and **DiffPool**, were tested during the various 
+experiments, only the code for the DiffPool model is made publicly available as it is the one that performed best. References to these two models can be found in the "*[Citations of works used](#citations-of-works-used)*" 
 section. 
 
 In addition to testing the different hyperparameters, the size of the kmer, ```len_kmer``` parameter, was also tested, 
-varying it from a size of 3 to a maximum of 19. The best result was obtained by setting the ```len_kmer``` parameter to 14.
+varying it from a size of 4 to a maximum of 16 for the overlap graph and from a size of 4 to a maximum size of 9 for the chaos graph.
+The best results were  obtained with a kmer length for the former and of 9 for tha latter. More experiments will be conducted in the near future to establish how the model behaves with larger kmer lengths.
 
-The DiffPool model is the one that obtained better results. 
-By grid search, the hyperparameters that yielded the best result are as follows:
-
-```shell
-+-------------------+---------+
-| hyperparameter    |   value |
-|-------------------+---------|
-| gnn_dim_hidden    |     256 |
-| dim_embedding     |      64 |
-| dim_embedding_mlp |     128 |
-| n_layers          |       1 |
-+-------------------+---------+
-```
-
-The following are the results obtained.
+## Chaos graph results
 
 ```shell
 +-----------+-------+
@@ -182,18 +144,50 @@ The following is the report classification
 ```shell
                  precision    recall  f1-score   support
 
-   Bunyavirales      0.815     0.775     0.794      1666
-Mononegavirales      0.657     0.747     0.699      1322
-    Nidovirales      0.709     0.883     0.787       901
-   Ortervirales      0.716     0.804     0.758       945
- Picornavirales      0.740     0.497     0.595      1239
-    Tymovirales      0.778     0.754     0.766       989
+   Bunyavirales      0.742     0.863     0.798      1747
+Mononegavirales      0.689     0.633     0.660      1258
+    Nidovirales      0.731     0.868     0.794      1135
+   Ortervirales      0.770     0.618     0.686       849
+ Picornavirales      0.646     0.587     0.615      1244
+    Tymovirales      0.827     0.737     0.780      1024
 
-       accuracy                          0.736      7062
-      macro avg      0.736     0.743     0.733      7062
-   weighted avg      0.740     0.736     0.732      7062
+       accuracy                          0.730      7257
+      macro avg      0.734     0.718     0.722      7257
+   weighted avg      0.730     0.730     0.726      7257
 
 ```
+
+## Overlap graph results
+
+```shell
++-----------+-------+
+| metric    | score |
+|-----------+-------|
+| accuracy  | 0.736 |
+| precision | 0.740 |
+| recall    | 0.736 |
+| f1-score  | 0.732 |
++-----------+-------+
+```
+
+The following is the report classification
+
+```shell
+                 precision    recall  f1-score   support
+
+   Bunyavirales      0.858     0.843     0.850      1747
+Mononegavirales      0.742     0.764     0.753      1258
+    Nidovirales      0.875     0.846     0.860      1135
+   Ortervirales      0.748     0.806     0.776       849
+ Picornavirales      0.693     0.744     0.717      1244
+    Tymovirales      0.889     0.779     0.830      1024
+
+       accuracy                          0.799      7257
+      macro avg      0.801     0.797     0.798      7257
+   weighted avg      0.804     0.799     0.801      7257
+
+```
+
 
 ## How to reproduce the experiment
 
@@ -236,3 +230,4 @@ This section provides citations of all the work used in the development of this 
 Companion Proceedings of the Web Conference 2022](https://arxiv.org/abs/1909.11855).
 * **DiffPool**: [Ying, Zhitao, et al. "Hierarchical graph representation learning with differentiable pooling." 
 Advances in neural information processing systems 31 (2018)](https://arxiv.org/abs/1806.08804).
+* **virus-taxonomy-classification**: By A.Cirillo and N.Gagliarde.
