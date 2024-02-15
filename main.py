@@ -152,7 +152,7 @@ def main(
             epochs=1000,
             evaluation=True,
             val_loader=val_dataloader,
-            patience=10,
+            patience=30,
             logger=train_logger
         )
 
