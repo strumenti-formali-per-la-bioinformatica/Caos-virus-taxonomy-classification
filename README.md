@@ -9,7 +9,7 @@
 * [Citations of works used](#citations-of-works-used)
 
 # Overview
-A taxonomy (or taxonomical classification) is a scheme of classification, it is a way to divide, often in an hierarchical way different entities.\
+A taxonomy (or taxonomical classification) is a scheme of classification, especially a hierarchical classification, in which things are organized into groups or types.
 In the world of biology being able to correctly identify the taxonomy of something can give us precious informations about it.\
 This project, inspired and made possible by the previous work of our colleagues A.Cirillo and N.Gagliarde, explores the possibility
 of using overlap and chaos graphs to train a GNN that is able to correctly identify the taxonomy of a virus.
@@ -191,7 +191,6 @@ Mononegavirales      0.742     0.764     0.753      1258
 
 ## How to run the code
 
-Here's an example of a command, running this without correctly installed environmentor having followed all the preprocessing steps is not advised and may lead to crashes and other unintended behaviour.
 Assuming a correctly installed environment and that the user followed all the preprocessing steps, we have nothing left but to run the ```main.py``` script as follows.
 
 ```shell
