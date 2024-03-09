@@ -35,7 +35,6 @@ class OverlapGraph:
         self.node_attr = list(attr.keys())
 
         attr = {}
-
         # create edges
         for k1 in self.kmers:
             for kmer in self.kmers:
@@ -107,6 +106,37 @@ def get_overlap_size(string1, string2):
     overlap_length = lps[-1]
 
     return overlap_length
+
+
+def get_frame(graph, framecount, pos):
+    plt.figure(figsize=(12, 9), dpi=150)
+    nx.draw(
+        graph,
+        pos,
+        edge_color='black',
+        width=1,
+        linewidths=1,
+        node_size=2000,
+        node_color='pink',
+        alpha=0.9,
+        connectionstyle='arc3, rad = 0.1',
+        labels={node[0]: node[1] for node in list(graph.nodes.data("value"))}
+    )
+    value_labels = nx.get_edge_attributes(graph, 'value')
+    edge_labels = {key: f'{value_labels[key]}' for key in value_labels}
+    nx.draw_networkx_edge_labels(
+        graph,
+        pos,
+        edge_labels=edge_labels,
+        verticalalignment = "center",
+        label_pos=0.43,
+        bbox=dict(alpha=0)
+    )
+    plt.axis('off')
+    plt.savefig(f"frame{framecount}.png")
+    plt.show()
+    plt.close()
+    
 
 
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+import time
 from typing import Optional
 from typing import Dict
 from typing import Any
@@ -54,7 +55,7 @@ def main(
         # init loggers
         logger: logging.Logger = setup_logger('logger', os.path.join(log_path, 'logger.log'))
         train_logger: logging.Logger = setup_logger('train', os.path.join(log_path, 'train.log'))
-
+        start = time.time()
         # init train and validation dataset
         train_dataset = DNADataset(
             root=os.path.join(os.getcwd(), 'data'),
@@ -71,7 +72,7 @@ def main(
             len_overlap=len_overlap,
             dataset_type='val'
         )
-
+        end = time.time()
         # add number of features node and number of classes
         hyperparameter['dim_features'] = train_dataset.num_node_features
         hyperparameter['dim_edge_features'] = train_dataset.num_edge_features
@@ -87,6 +88,7 @@ def main(
         logger.info(f'Number of train graph: {len(train_dataset)}')
         logger.info(f'Number of val graph: {len(val_dataset)}')
         logger.info(f'Number of class: {train_dataset.num_classes}')
+        logger.info(f'Elapsed time: {end - start}')
         logger.info(SEPARATOR)
 
         # create train, and validation data

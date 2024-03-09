@@ -83,24 +83,32 @@ class ChaosGraph:
         plt.axis('off')
         plt.show()
 
+
+def get_frame(graph, framecount, pos):
+
+    # Crea una figura per il plot
+    plt.figure(figsize=(9, 9), dpi=150)
+
+    # Disegna il grafo
+    nx.draw(graph, pos, edge_color='black', width=1, linewidths=1,
+            node_size=800, node_color='pink', alpha=0.9,
+            labels={node: node for node in graph.nodes()})  # Usa la chiave del nodo come etichetta
+
+    # Ottieni gli attributi 'distance' per ogni arco nel grafo
+    edge_labels = nx.get_edge_attributes(graph, 'distance')
+
+    # Disegna le etichette degli archi con la distanza
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_color='red')
+
+    # Nasconde gli assi per una visualizzazione più pulita
+    plt.axis('off')
+    plt.savefig(f"frame{framecount}.png")
+    plt.show()
+
 if __name__ == '__main__':
-    sequence1 = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    sequence1 = 'ACTACTTCACTTCTTCACTTCTTCGGCGGCTTACTTCTCACTTCTCACTTCTTCGGCGGCCAC'
     graph1 = ChaosGraph(sequence1, 4)
     print("---Grafo 1 ---")
     for node, attrs in graph1.graph_ohe.nodes(data=True):
         print(f"Nodo {node}: {attrs}")
-    graph1.plot_graph()
-
-    sequence2 = 'CCCCCCCCCCCCCCCCCCCCCCCCCTTTTAAAAAAAAAAAAAAAAAAAAAAAAA'
-    graph2 = ChaosGraph(sequence2,4)
-    print("---Grafo 2 ---")
-    for node, attrs in graph2.graph_ohe.nodes(data=True):
-        print(f"Nodo {node}: {attrs}")
-    graph2.plot_graph()    
-
-    sequence3 = 'ACTACTTCACTTCTTCACTTCTTCGGCGGCTTACTTCTCACTTCTCACTTCTTCGGCGGCCACTTCTTCGGCGGC'
-    graph3 = ChaosGraph(sequence3, 4)
-    print("---Grafo 3 ---")
-    for node, attrs in graph3.graph_ohe.nodes(data=True):
-        print(f"Nodo {node}: {attrs}") 
-    graph3.plot_graph()    
+    graph1.plot_graph() 

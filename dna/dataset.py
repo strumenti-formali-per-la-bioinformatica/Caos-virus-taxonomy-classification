@@ -118,7 +118,7 @@ class DNADataset(Dataset):
             # read sequence from dataset
             sequence: str = self.df.loc[idx, 'sequence']
             # generate de bruijn graph and convert it in geometric data
-            graph = OverlapGraph(sequence, self.k_size)
+            graph = DeBruijnGraph(sequence, self.k_size)
             
             ptg = from_networkx(
                 graph.graph_ohe,
