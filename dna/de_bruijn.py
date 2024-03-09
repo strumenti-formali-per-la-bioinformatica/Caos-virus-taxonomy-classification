@@ -79,6 +79,35 @@ class DeBruijnGraph:
         plt.show()
 
 
+def get_frame(graph, framecount, pos):
+
+    pos = nx.circular_layout(graph)
+    plt.figure()
+    nx.draw(
+        graph,
+        pos,
+        edge_color='black',
+        width=1,
+        linewidths=1,
+        node_size=1000,
+        node_color='pink',
+        alpha=0.9,
+        labels={node[0]: node[1] for node in list(graph.nodes.data("value"))}
+    )
+    value_labels = nx.get_edge_attributes(graph, 'value')
+    frequency_labels = nx.get_edge_attributes(graph, 'frequency')
+    edge_labels = {key: f'{value_labels[key]} - {frequency_labels[key]}' for key in value_labels}
+    nx.draw_networkx_edge_labels(
+        graph,
+        pos,
+        edge_labels=edge_labels
+    )
+    # Nasconde gli assi per una visualizzazione più pulita
+    plt.axis('off')
+    plt.savefig(f"frame{framecount}.png")
+    plt.show()
+
+
 if __name__ == '__main__':
     graph = DeBruijnGraph('ACTTCTTCGGC', 4)
     graph.plot_graph()
